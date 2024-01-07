@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
+import os
 import csv
 import copy
 import argparse
@@ -79,17 +80,26 @@ class hand_landmark_recog:
         self.keypoint_classifier = KeyPointClassifier()
 
         self.point_history_classifier = PointHistoryClassifier()
-
         # Read labels ###########################################################
-        with open('/home/syed_mazhar/c++_ws/src/aa_zagreb_repo/HRI_project/HRI-project/sphero_simulation-master/sphero_stage/src/hand_gesture_recognition_mediapipe/model/keypoint_classifier/keypoint_classifier_label.csv',
-                encoding='utf-8-sig') as f:
+
+        # Get the directory path of the current script
+        current_dir = os.path.dirname(os.path.abspath(__file__))
+
+        # Relative path to the CSV file
+        keypoint_classifier_label_file_path = os.path.join(current_dir, 'model', 'keypoint_classifier', 'keypoint_classifier_label.csv')
+        point_history_classifier_label_file_path = os.path.join(current_dir, 'model', 'point_history_classifier', 'point_history_classifier_label.csv')
+
+        # with open('/home/syed_mazhar/c++_ws/src/aa_zagreb_repo/HRI_project/HRI-project/sphero_simulation-master/sphero_stage/src/hand_gesture_recognition_mediapipe/model/keypoint_classifier/keypoint_classifier_label.csv',
+        #         encoding='utf-8-sig') as f:
+        with open(keypoint_classifier_label_file_path, encoding='utf-8-sig') as f:
             self.keypoint_classifier_labels = csv.reader(f)
             self.keypoint_classifier_labels = [   # list of keypoint labels
                 row[0] for row in self.keypoint_classifier_labels
             ]
-        with open(
-                '/home/syed_mazhar/c++_ws/src/aa_zagreb_repo/HRI_project/HRI-project/sphero_simulation-master/sphero_stage/src/hand_gesture_recognition_mediapipe/model/point_history_classifier/point_history_classifier_label.csv',
-                encoding='utf-8-sig') as f:
+        # with open(
+        #         '/home/syed_mazhar/c++_ws/src/aa_zagreb_repo/HRI_project/HRI-project/sphero_simulation-master/sphero_stage/src/hand_gesture_recognition_mediapipe/model/point_history_classifier/point_history_classifier_label.csv',
+        #         encoding='utf-8-sig') as f:
+        with open(point_history_classifier_label_file_path, encoding='utf-8-sig') as f:
             self.point_history_classifier_labels = csv.reader(f)
             self.point_history_classifier_labels = [   # list of point history labels
                 row[0] for row in self.point_history_classifier_labels

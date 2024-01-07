@@ -1,18 +1,17 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
+import os
 import numpy as np
 import tensorflow as tf
 
 
 class PointHistoryClassifier(object):
-    def __init__(
-        self,
-        # model_path='model/point_history_classifier/point_history_classifier.tflite',
-        model_path='/home/syed_mazhar/c++_ws/src/aa_zagreb_repo/HRI_project/HRI-project/sphero_simulation-master/sphero_stage/src/hand_gesture_recognition_mediapipe/model/point_history_classifier/point_history_classifier.tflite',
-        score_th=0.5,
-        invalid_value=0,
-        num_threads=1,
-    ):
+    def __init__(self, score_th=0.5, invalid_value=0, num_threads=1,):
+
+        current_dir = os.path.dirname(os.path.abspath(__file__))
+
+        model_path = os.path.join(current_dir, 'point_history_classifier.tflite')
+        
         self.interpreter = tf.lite.Interpreter(model_path=model_path,
                                                num_threads=num_threads)
 
