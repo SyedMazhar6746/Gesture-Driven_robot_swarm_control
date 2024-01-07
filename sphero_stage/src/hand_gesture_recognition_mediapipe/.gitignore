@@ -133,3 +133,16 @@ dmypy.json
 .idea/
 
 .DS_Store
+
+# My ignored files
+*.pyc
+*.pyo
+*.pyd
+*.so
+*.json
+equally_spaced_points.py
+hand_recog.py
+prac.py
+sub.py
+tempCodeRunnerFile.py
+
