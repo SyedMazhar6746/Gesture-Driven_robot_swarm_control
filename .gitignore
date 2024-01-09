@@ -317,3 +317,11 @@ CATKIN_IGNORE
 .ionide
 
 # End of https://www.toptal.com/developers/gitignore/api/python,pycharm,visualstudiocode,ros
+sphero_stage/.vscode/
+# sphero_stage/src/hand_gesture_recognition_mediapipe/utils/alignment_check.py
+sphero_stage/src/hand_gesture_recognition_mediapipe/__pycache__/
+sphero_stage/src/hand_gesture_recognition_mediapipe/.vscode/
+sphero_stage/src/hand_gesture_recognition_mediapipe/hanim_1.py
+sphero_stage/src/hand_gesture_recognition_mediapipe/hanim_2.py
+
+

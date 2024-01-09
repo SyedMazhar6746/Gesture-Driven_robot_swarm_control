@@ -39,12 +39,12 @@ class Boid(object):
             return Vector2()
         else:
             # tanh path
-            desired_velocity_v.x = np.tanh((ramped_speed / distance) * target_offset_v.x )
-            desired_velocity_v.y = np.tanh((ramped_speed / distance) * target_offset_v.y )
+            # desired_velocity_v.x = np.tanh((ramped_speed / distance) * target_offset_v.x )
+            # desired_velocity_v.y = np.tanh((ramped_speed / distance) * target_offset_v.y )
 
             # Straight path
-            # desired_velocity_v.x = (ramped_speed / distance) * target_offset_v.x 
-            # desired_velocity_v.y = (ramped_speed / distance) * target_offset_v.y 
+            desired_velocity_v.x = (ramped_speed / distance) * target_offset_v.x 
+            desired_velocity_v.y = (ramped_speed / distance) * target_offset_v.y 
 
             if target_offset_v.norm() > self.max_speed_mag:
                 desired_velocity_v.set_mag(self.max_speed_mag)

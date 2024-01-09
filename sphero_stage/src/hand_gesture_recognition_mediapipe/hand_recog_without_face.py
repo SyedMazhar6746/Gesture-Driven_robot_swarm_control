@@ -37,7 +37,6 @@ def get_args():
     
     parser.add_argument("--no_of_hands", type=int, default=2)
 
-
     args = parser.parse_args()
 
     return args
@@ -64,9 +63,9 @@ class hand_landmark_recog:
         self.use_brect = True
 
         # Camera preparation ###############################################################
-        # self.cap = cv.VideoCapture(cap_device)
-        # self.cap.set(cv.CAP_PROP_FRAME_WIDTH, cap_width)
-        # self.cap.set(cv.CAP_PROP_FRAME_HEIGHT, cap_height)
+        self.cap = cv.VideoCapture(cap_device)
+        self.cap.set(cv.CAP_PROP_FRAME_WIDTH, cap_width)
+        self.cap.set(cv.CAP_PROP_FRAME_HEIGHT, cap_height)
 
         # Model load #############################################################
         mp_hands = mp.solutions.hands
@@ -115,28 +114,28 @@ class hand_landmark_recog:
         # Finger gesture history ################################################
         self.finger_gesture_history = deque(maxlen=self.history_length)
 
+        # hand history (right or left)
+        self.hand_history = deque(maxlen=10)
+        self.landmark_list_history = deque(maxlen=10)
 
 
-    def run_recog(self, cv_image, person_name):
-        key = cv.waitKey(10)
-            
-        if person_name == "Mazhar-Boss":
+    def run_recog(self):
         #  ########################################################################
-            mode = 0
+        mode = 0
 
-        # while True:
+        while True:
             fps = self.cvFpsCalc.get()
 
             # Process Key (ESC: end) #################################################
-            # if key == 27:  # ESC
-            #     break
+            key = cv.waitKey(10)
+            if key == 27:  # ESC
+                break
             number, mode = select_mode(key, mode)  # for gathering data using k, h, number of labels, etc
 
             # Camera capture #####################################################
-            # ret, image = self.cap.read()
-            # if not ret:
-            #     break
-            image = cv_image
+            ret, image = self.cap.read()
+            if not ret:
+                break
             image = cv.flip(image, 1)  # Mirror display
             debug_image = copy.deepcopy(image)
             # print('image size', debug_image.shape)
@@ -153,17 +152,19 @@ class hand_landmark_recog:
             if results.multi_hand_landmarks is not None:
                 for hand_landmarks, handedness in zip(results.multi_hand_landmarks,
                                                     results.multi_handedness):
-                    
+                    self.hand_history.append(handedness.classification[0].label[0:])
                     # print the landmark points in 3D for each point (Almost unuseful)
                     # print('hand_landmarks:', hand_landmarks)
-
+                    # print('hand_history:', self.hand_history)
+                    # print('handedness:', handedness.classification[0].label[0:])
                     # Bounding box calculation
                     brect = calc_bounding_rect(debug_image, hand_landmarks)
                     # Landmark calculation
                     landmark_list = calc_landmark_list(debug_image, hand_landmarks)
                     self.landmark_list = landmark_list
-
+                    self.landmark_list_history.append(self.landmark_list)
                     # print all the landmarks in pixels
+                    # print('landmark_list_history:', self.landmark_list_history)
                     # print('landmark_list:', landmark_list[8])
                     # print('landmark_list:', len(landmark_list))
 
@@ -176,7 +177,7 @@ class hand_landmark_recog:
 
                     pre_processed_point_history_list = pre_process_point_history( # point history in meters or cms
                         debug_image, self.point_history) 
-                    
+                    # print('pre_processed_point_history_list:', self.point_history)
                     # if pre_processed_point_history_list is not None: 
                     #     print('pre_processed_point_history_list:', pre_processed_point_history_list) # len = 32 (16 * 2) 2 * history length
 
@@ -215,24 +216,19 @@ class hand_landmark_recog:
                         self.point_history_classifier_labels[most_common_fg_id[0][0]],
                     )
 
-
             else:
                 self.landmark_list = []
                 self.point_history.append([0, 0])
             
 
-            debug_image = draw_point_history(debug_image, self.point_history)
+            # debug_image = draw_point_history(debug_image, self.point_history)
             debug_image = draw_info(debug_image, fps, mode, number)
 
             # Screen reflection #############################################################
-            cv.imshow('Hand Gesture Recognition - hands', debug_image)
+            cv.imshow('Hand Gesture Recognition', debug_image)
 
             if self.landmark_list:
-                yield self.landmark_list, self.keypoint_classifier_labels[hand_sign_id]
-        else:
-
-            image = cv.flip(cv_image, 1)  # Mirror display
-            cv.imshow('Hand Gesture Recognition - hands', image)
-
-        # self.cap.release()
-        # cv.destroyAllWindows()
+                yield self.landmark_list, self.keypoint_classifier_labels[hand_sign_id], self.point_history, self.hand_history, self.landmark_list_history
+        
+        self.cap.release()
+        cv.destroyAllWindows()

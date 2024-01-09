@@ -9,6 +9,7 @@ from geometry_msgs.msg import Twist
 
 from utils.boid import Boid, pixels_to_meters
 
+from utils.alignment_check import Alignment
 
 class Robot_1_move:
 
@@ -38,6 +39,8 @@ class Robot_1_move:
             nav_velocity_v = self.agent.arrive(msg, self.targets[int(id)])
 
             Total_velocity = self.nav_velocity_v_weight*nav_velocity_v 
+            Total_velocity.x += self.weighted_vel[int(id)][0]
+            Total_velocity.y += self.weighted_vel[int(id)][1]
 
             self.publish_vel(frame_id, Total_velocity)
 
@@ -58,12 +61,15 @@ class Robot_1_move:
         # print("Received 2D list:", reshaped_data[8])
         # print("Received 2D list:", len(reshaped_data))
 
-    def __init__(self, max_speed, slowing_radius):
-        
+    def __init__(self, vel, max_speed, slowing_radius):
+        self.num_of_robots = rospy.get_param("/num_of_robots")
+
+        self.weighted_vel = [0]*self.num_of_robots
+        self.weighted_vel = vel.weighted_velocities(2)
+
         self.max_speed = max_speed
         self.slowing_radius = slowing_radius
         
-        self.num_of_robots = rospy.get_param("/num_of_robots")
         self.targets = [0] * self.num_of_robots
         self.velocity = [0.0, 0.0]  # Initial velocity
         self.landmarks = [0] * 20
@@ -82,7 +88,8 @@ if __name__ == '__main__':
 
     try:
         rospy.init_node('rotate_robot_circularly')
-        robot = Robot_1_move(max_speed=0.6, slowing_radius=1.0)
+        vel = Alignment()
+        robot = Robot_1_move(vel, max_speed=0.6, slowing_radius=1.0)
         rospy.spin()
 
     except rospy.ROSInterruptException:
