@@ -18,15 +18,15 @@ class run_hand_recognition():
 
         self.bridge = CvBridge()
         rospy.Subscriber('camera_feed_1', Image, self.callback_stream)
+        self.subs = rospy.Subscriber('recognized_names', String, self.callback)
+        self.person_name_history = deque(maxlen=3)
+
         rate = rospy.Rate(10)
         rate.sleep()
         self.person_name = "unknown"
-        self.actual_name = "Mazhar-Boss"   # change the name according to face recognition
-        self.person_name_history = deque(maxlen=3)
-        # self.person_name = "Mazhar-Boss"
+        self.actual_name = "mazhar"   # change the name according to face recognition
         self.msg = Float64MultiArray()
         self.pub = rospy.Publisher('landmarks', Float64MultiArray, queue_size=10)
-        self.subs = rospy.Subscriber('recognized_names', String, self.callback)
 
     def callback_stream(self, data):
         self.cv_image = self.bridge.imgmsg_to_cv2(data, "bgr8")
@@ -36,25 +36,58 @@ class run_hand_recognition():
         self.msg.data = flattened_array.tolist()
         self.pub.publish(self.msg)
 
+    def find_last_index_of_left_and_right(self, hand_history, landmark_list_history):
+        # Convert the list to a NumPy array
+        arr = np.array(hand_history)
+
+        # Find the index of the last "Left"
+        last_left_index = np.where(arr == "Left")[0][-1] if "Left" in arr else None
+        last_right_index = np.where(arr == "Right")[0][-1] if "Right" in arr else None
+
+        landmark_list_left = landmark_list_history[last_left_index]
+        landmark_list_right = landmark_list_history[last_right_index]
+        
+        return landmark_list_left, landmark_list_right
+    
     def callback(self, msg):
         self.person_name_history.append(msg.data)
         if self.actual_name in self.person_name_history:
             self.person_name = self.actual_name
         else:
             self.person_name = "unknown"
-        print("person", self.person_name)
+        # print("person", self.person_name)
 
     def receive_landmarks(self):
         while not rospy.is_shutdown():
-            for landmark_list, symbol in hand_recognizer.run_recog(self.cv_image, self.person_name): # landmark_list is a list of all landmarks in pixels
-                # print('hand', symbol)
-                rescaled_points = rescale_landmark_resolution(landmark_list)
-                if symbol == "Open":
-                    equidistant_points = equidistant_points_func(rescaled_points, symbol)
+            for landmark_list, symbol, point_history, hand_history, landmark_list_history in hand_recognizer.run_recog(self.cv_image, self.person_name): # landmark_list is a list of all landmarks in pixels
+                print('person_name', self.person_name)
+                if symbol=="Letter C" and "Left" in hand_history and "Right" in hand_history:
+                    landmark_list_left, landmark_list_right = self.find_last_index_of_left_and_right(hand_history, landmark_list_history)
+                    landmark_left_and_right = landmark_list_left + landmark_list_right
+                    rescaled_points = rescale_landmark_resolution(landmark_left_and_right) 
+                    equidistant_points = equidistant_points_func(rescaled_points, symbol, hand_history)
+                    self.publish_points(equidistant_points)
+                    
+                elif symbol == "Open" or symbol == "Letter C":
+                    rescaled_points = rescale_landmark_resolution(landmark_list)
+                    equidistant_points = equidistant_points_func(rescaled_points, symbol, hand_history)
                     self.publish_points(equidistant_points)
 
-                elif symbol == "Letter C":
-                    equidistant_points = equidistant_points_func(rescaled_points, symbol)
+                elif symbol == "Pointer":
+                    rescaled_points = rescale_landmark_resolution(point_history)
+                    equidistant_points = equidistant_points_func(rescaled_points, symbol, hand_history)
+                    is_any_nan = np.isnan(equidistant_points).any()
+                    if not is_any_nan:
+                        self.publish_points(equidistant_points)
+
+                elif symbol == "Heart":
+                    rescaled_points = rescale_landmark_resolution(landmark_list[7])
+                    equidistant_points = equidistant_points_func(rescaled_points, symbol, hand_history)
+                    self.publish_points(equidistant_points)
+                
+                elif symbol == "Closed":
+                    rescaled_points = rescale_landmark_resolution(landmark_list[0])
+                    equidistant_points = equidistant_points_func(rescaled_points, symbol, hand_history)
                     self.publish_points(equidistant_points)
 
 

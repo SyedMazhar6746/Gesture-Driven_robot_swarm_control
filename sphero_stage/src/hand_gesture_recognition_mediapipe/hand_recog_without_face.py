@@ -88,16 +88,13 @@ class hand_landmark_recog:
         keypoint_classifier_label_file_path = os.path.join(current_dir, 'model', 'keypoint_classifier', 'keypoint_classifier_label.csv')
         point_history_classifier_label_file_path = os.path.join(current_dir, 'model', 'point_history_classifier', 'point_history_classifier_label.csv')
 
-        # with open('/home/syed_mazhar/c++_ws/src/aa_zagreb_repo/HRI_project/HRI-project/sphero_simulation-master/sphero_stage/src/hand_gesture_recognition_mediapipe/model/keypoint_classifier/keypoint_classifier_label.csv',
-        #         encoding='utf-8-sig') as f:
+
         with open(keypoint_classifier_label_file_path, encoding='utf-8-sig') as f:
             self.keypoint_classifier_labels = csv.reader(f)
             self.keypoint_classifier_labels = [   # list of keypoint labels
                 row[0] for row in self.keypoint_classifier_labels
             ]
-        # with open(
-        #         '/home/syed_mazhar/c++_ws/src/aa_zagreb_repo/HRI_project/HRI-project/sphero_simulation-master/sphero_stage/src/hand_gesture_recognition_mediapipe/model/point_history_classifier/point_history_classifier_label.csv',
-        #         encoding='utf-8-sig') as f:
+
         with open(point_history_classifier_label_file_path, encoding='utf-8-sig') as f:
             self.point_history_classifier_labels = csv.reader(f)
             self.point_history_classifier_labels = [   # list of point history labels
@@ -113,7 +110,6 @@ class hand_landmark_recog:
 
         # Finger gesture history ################################################
         self.finger_gesture_history = deque(maxlen=self.history_length)
-
         # hand history (right or left)
         self.hand_history = deque(maxlen=10)
         self.landmark_list_history = deque(maxlen=10)
@@ -138,7 +134,6 @@ class hand_landmark_recog:
                 break
             image = cv.flip(image, 1)  # Mirror display
             debug_image = copy.deepcopy(image)
-            # print('image size', debug_image.shape)
 
             # Detection implementation #############################################################
             image = cv.cvtColor(image, cv.COLOR_BGR2RGB)
@@ -154,9 +149,8 @@ class hand_landmark_recog:
                                                     results.multi_handedness):
                     self.hand_history.append(handedness.classification[0].label[0:])
                     # print the landmark points in 3D for each point (Almost unuseful)
-                    # print('hand_landmarks:', hand_landmarks)
-                    # print('hand_history:', self.hand_history)
                     # print('handedness:', handedness.classification[0].label[0:])
+                    
                     # Bounding box calculation
                     brect = calc_bounding_rect(debug_image, hand_landmarks)
                     # Landmark calculation
@@ -164,23 +158,14 @@ class hand_landmark_recog:
                     self.landmark_list = landmark_list
                     self.landmark_list_history.append(self.landmark_list)
                     # print all the landmarks in pixels
-                    # print('landmark_list_history:', self.landmark_list_history)
-                    # print('landmark_list:', landmark_list[8])
-                    # print('landmark_list:', len(landmark_list))
 
                     # Conversion to relative coordinates with respect to palm point in meters or cm/ normalized coordinates
                     pre_processed_landmark_list = pre_process_landmark( 
                         landmark_list)
                     
-                    # if pre_processed_landmark_list is not None:
-                    #     print('pre_processed_landmark_list:', pre_processed_landmark_list[8:10]) # len = 42 (21 * 2)
-
                     pre_processed_point_history_list = pre_process_point_history( # point history in meters or cms
                         debug_image, self.point_history) 
-                    # print('pre_processed_point_history_list:', self.point_history)
-                    # if pre_processed_point_history_list is not None: 
-                    #     print('pre_processed_point_history_list:', pre_processed_point_history_list) # len = 32 (16 * 2) 2 * history length
-
+                    
                     # Write to the dataset file
                     logging_csv(number, mode, pre_processed_landmark_list,
                                 pre_processed_point_history_list)

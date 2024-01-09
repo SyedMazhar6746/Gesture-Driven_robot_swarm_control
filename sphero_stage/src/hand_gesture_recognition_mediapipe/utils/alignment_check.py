@@ -5,12 +5,7 @@ import rospy
 import numpy as np
 import re
 import tf2_ros
-from nav_msgs.msg import Odometry
-from geometry_msgs.msg import Twist, PoseStamped
-# from obstacle_avoidance import ObstacleAvoidance
-
-from dynamic_reconfigure.server import Server
-from sphero_stage.cfg import obstacle_avoidance_2Config
+from nav_msgs.msg import Odometry 
 
 class Alignment:
 
@@ -49,7 +44,6 @@ class Alignment:
                 theta = np.arctan2(y, x)
                 if distance < self.neighbours_dist and (theta <= self.neighbours_angle
                                                          and theta >= -self.neighbours_angle):
-                    # print(x,y,theta)
                     neighbours.append(i)
         return neighbours
     
@@ -62,18 +56,17 @@ class Alignment:
             for neighbour in neighbours:
                 difference = self.positions[i] - self.positions[neighbour]
                 if np.linalg.norm(difference) < self.separation_dist:
-                    force += (difference/np.linalg.norm(difference))
+                    force += (difference/max(np.linalg.norm(difference), 0.001))
             
             force /= max(1, len(neighbours))
-            vx = max(self.min_linear_velx, min(force[0], self.max_linear_velx))
-            vy = max(self.min_linear_vely, min(force[1], self.max_linear_vely))
+            vx = force[0]
+            vy = force[1]
             v = np.array([vx, vy])
             self.separation_vel[i] = v
 
     def weighted_velocities(self, event): 
         # compute the weighted velocities and publish them
         self.separation()
-        # print('weights', self.align_vel_weights,self.cohesion_vel_weights, self.separation_vel_weights )
         for i in range(self.num_of_robots):
             self.weighted_vel[i] = (self.separation_vel_weights*self.separation_vel[i])
         return self.weighted_vel
@@ -90,15 +83,6 @@ class Alignment:
         
         # separation distance to be maintained
         self.separation_dist = 0.1 # 0.1 works best
-
-        #max force of cohesion
-        self.max_force = 10
-
-        # max and min velocities for the robots
-        self.max_linear_velx = 0.4
-        self.min_linear_velx = -0.4
-        self.max_linear_vely = 0.4
-        self.min_linear_vely = -0.4
 
         # velocity vector weights for each behaviour
         self.separation_vel_weights = 10 # 10 works best
@@ -122,15 +106,3 @@ class Alignment:
 
         rospy.Timer(rospy.Duration(0.05), self.weighted_velocities)
         self.weighted_vel = [0]*self.num_of_robots
-
-
-if __name__ == '__main__':
-    rospy.init_node('alignment')
-    # node = Alignment()
-    # srv = Server(obstacle_avoidance_2Config, node.param_callback) 
-    rospy.spin()
-
-
-
-
-

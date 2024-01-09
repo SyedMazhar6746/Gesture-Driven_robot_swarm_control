@@ -58,8 +58,6 @@ class Robot_1_move:
             converted_targets.append(converted_point)
         
         self.targets = converted_targets
-        # print("Received 2D list:", reshaped_data[8])
-        # print("Received 2D list:", len(reshaped_data))
 
     def __init__(self, vel, max_speed, slowing_radius):
         self.num_of_robots = rospy.get_param("/num_of_robots")

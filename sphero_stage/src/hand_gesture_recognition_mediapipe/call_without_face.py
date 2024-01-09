@@ -28,10 +28,7 @@ class run_hand_recognition():
 
         landmark_list_left = landmark_list_history[last_left_index]
         landmark_list_right = landmark_list_history[last_right_index]
-        # print("Last Left Index:", last_left_index)
-        # print("Last Right Index:", last_right_index)
-        # print("landmark_list_left:", landmark_list_left)
-        # print("landmark_list_right:", landmark_list_right)
+        
         return landmark_list_left, landmark_list_right
     
     def publish_points(self, equidistant_points):
@@ -44,11 +41,9 @@ class run_hand_recognition():
             for landmark_list, symbol, point_history, hand_history, landmark_list_history in hand_recognizer.run_recog(): # landmark_list is a list of all landmarks in pixels
                 
                 if symbol=="Letter C" and "Left" in hand_history and "Right" in hand_history:
-                    # print('land_mark', landmark_list_history)
                     landmark_list_left, landmark_list_right = self.find_last_index_of_left_and_right(hand_history, landmark_list_history)
                     landmark_left_and_right = landmark_list_left + landmark_list_right
                     rescaled_points = rescale_landmark_resolution(landmark_left_and_right) 
-                    # print('rescaled_points', rescaled_points)
                     equidistant_points = equidistant_points_func(rescaled_points, symbol, hand_history)
                     self.publish_points(equidistant_points)
                     

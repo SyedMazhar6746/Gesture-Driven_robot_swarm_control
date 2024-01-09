@@ -15,50 +15,40 @@ class FaceRecognizer:
 
         self.bridge = CvBridge()
         self.cap = cv2.VideoCapture(0)
-        # rospy.Subscriber('camera_feed_1', Image, self.callback)
         self.stream_pub = rospy.Publisher('camera_feed_1', Image, queue_size=10)
-
         self.publisher = rospy.Publisher('recognized_names', String, queue_size=10)
         
         current_dir = os.path.dirname(os.path.abspath(__file__))
-
         images_folder = os.path.join(current_dir, 'face_model', 'train_images')
 
-        # obama_image = face_recognition.load_image_file("/home/syed_mazhar/c++_ws/src/aa_zagreb_repo/HRI_project/face_recognition/Train/obama.png")
+        # Add for extra faces
         obama_image = face_recognition.load_image_file(images_folder + "/obama.png")
         obama_face_encoding = face_recognition.face_encodings(obama_image)[0]
 
         biden_image = face_recognition.load_image_file(images_folder + "/biden.png")
         biden_face_encoding = face_recognition.face_encodings(biden_image)[0]
 
-        ozge_yagiz_image = face_recognition.load_image_file(images_folder + "/ozge_yagiz.jpeg")
-        ozge_yagiz_face_encoding = face_recognition.face_encodings(ozge_yagiz_image)[0]
-
-        mazhar_image = face_recognition.load_image_file(images_folder + "/Mazhar.png")
+        mazhar_image = face_recognition.load_image_file(images_folder + "/mazhar.png")
         mazhar_face_encoding = face_recognition.face_encodings(mazhar_image)[0]
 
+        # Add for extra faces
         self.known_face_encodings = [
             obama_face_encoding,
             biden_face_encoding,
-            ozge_yagiz_face_encoding,
             mazhar_face_encoding
         ]
 
+        # Add for extra faces
         self.known_face_names = [
             "Barack Obama",
             "Joe Biden",
-            "Ozge Yagiz",
-            "Mazhar-Boss"
+            "mazhar"
         ]
 
         print('Learned encoding for', len(self.known_face_encodings), 'images.')
 
-    # def callback(self, data):
-    #     self.cv_image = self.bridge.imgmsg_to_cv2(data, "bgr8")
+    def recognize_faces(self, continuous): # continuous is a boolean variable for continuous detection
 
-    def recognize_faces(self, continuous):
-
-        # video_capture = cv2.VideoCapture(0)
         process_this_frame = True
 
         while not rospy.is_shutdown():
@@ -66,7 +56,6 @@ class FaceRecognizer:
             if ret:
                 image_message = self.bridge.cv2_to_imgmsg(frame, "bgr8")
                 self.stream_pub.publish(image_message)
-            # frame = frame
 
             if process_this_frame:
                 name = "Unknown"
@@ -90,6 +79,7 @@ class FaceRecognizer:
                     font = cv2.FONT_HERSHEY_DUPLEX
                     flipped_name = name[::-1]
                     cv2.putText(frame, name, (left * 4 + 6, bottom * 4 - 6), font, 1.0, (255, 255, 255), 1)
+                # Publishing the name
                 self.publisher.publish(name)
 
             if not continuous:
