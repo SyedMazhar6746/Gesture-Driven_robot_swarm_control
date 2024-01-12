@@ -323,5 +323,6 @@ sphero_stage/src/hand_gesture_recognition_mediapipe/__pycache__/
 sphero_stage/src/hand_gesture_recognition_mediapipe/.vscode/
 sphero_stage/src/hand_gesture_recognition_mediapipe/hanim_1.py
 sphero_stage/src/hand_gesture_recognition_mediapipe/hanim_2.py
+sphero_stage/src/hand_gesture_recognition_mediapipe/gesture_manipulation_commented.py
 
 

@@ -4,16 +4,6 @@ import matplotlib.pyplot as plt
 import numpy as np
 from scipy.interpolate import UnivariateSpline
 from scipy.interpolate import interp1d
-# Define the points: 
-# heart
-# x = np.array([4, 2.0, 1, 4, 7, 6, 4])
-# y = np.array([0, 2.0, 5, 4, 5, 2, 0])
-
-
-# Letter C
-
-# x = np.array([4, 0, 0, 4])
-# y = np.array([0, 0, 4, 4])
 
 def rescale_landmark_resolution(landmark_list): #No further changes required
     landmark_array = np.array(landmark_list)
@@ -79,13 +69,6 @@ def heart_draw_curve_and_points(x, y, left, fix):
 
 
 def Letter_c(hand_landmarks):
-    # actual letter C
-    # hand_landmarks = np.array([[469, 340], [408, 318], 
-    #                         [359, 290], [315, 287], [277, 290], 
-    #                         [401, 196], [362, 161], [326, 154], [294, 157], 
-    #                         [414, 193], [359, 152], [319, 151], [286, 161], 
-    #                         [424, 202], [370, 161], [326, 157], [290, 163], 
-    #                         [424, 220], [376, 192], [341, 179], [311, 171]])
 
     # Given order
     order = [4, 3, 2, 5, 6, 7, 8]
@@ -100,8 +83,6 @@ def Letter_c(hand_landmarks):
 
 def open_hand(hand_landmarks):
     hand_landmarks = hand_landmarks[1:]
-    # x = np.array([point[0] for point in hand_landmarks])
-    # y = np.array([point[1] for point in hand_landmarks])
     return hand_landmarks
 
 
@@ -110,19 +91,12 @@ def Heart(hand_landmarks):
     hand_landmarks_left = hand_landmarks[:21]
     hand_landmarks_right =hand_landmarks[21:]
 
-    # print('len left', len(hand_landmarks_left))
-    # print('len right', len(hand_landmarks_right))
-
     # Given order
     order = [4, 5, 6, 7, 8]
 
     # Extracting points in the given order
     ordered_points_left = [hand_landmarks_left[idx] for idx in order]
     ordered_points_right = [hand_landmarks_right[idx] for idx in order]
-
-    # print('ordered points left', ordered_points_left)
-    # print('ordered_points_right', ordered_points_right)
-    # ordered_points = ordered_points_left + ordered_points_right
     
     # Separating x and y points
     x_left = np.array([point[0] for point in ordered_points_left])
@@ -196,83 +170,6 @@ def equidistant_points_func(hand_landmarks, symbol, hand_history):
 
 def plot(x, y, points_fitted, equidistant_points): # No further changes required
     # Graph:
-    # plt.plot(x, y, 'ok', label='original points')
-    plt.plot(points_fitted[:, 0], points_fitted[:, 1], '-r', label='fitted spline k=3, s=0.2')
-    plt.scatter(equidistant_points[:, 0], equidistant_points[:, 1], color='red', label='Equidistant points')
-    plt.axis('equal')
-    plt.legend()
-    plt.xlabel('x')
-    plt.ylabel('y')
-    plt.show()
-
-    # print(equidistant_points)
-
-
-
-# Heart
-# x = np.array([4, 1, 2, 3, 4, 4.3, 5, 6, 7, 4.2])
-# y = np.array([0, 4, 5, 4.5, 3.5, 3.5, 4.5, 5, 4, 0])
-
-# def Heart_fixed(hand_landmarks): # No further changes required
-
-# [[100, 100], [80, 80], [85, 70], [95, 75], [105, 75], [115, 70], [120, 80], [100, 100]]
-
-# points_fitted, equidistant_points = heart_draw_curve_and_points(x, y)
-# print(len(equidistant_points))
-# plot(x, y, points_fitted, equidistant_points)
-    
-
-# # Example usage:
-# hand_landmarks = [120, 120]  # Replace this with your actual hand landmark point
-# x, y = Heart_fixed(hand_landmarks)
-# points_fitted, equidistant_points = heart_draw_curve_and_points(x, y, left=False, fix=True)
-# plot(x, y, points_fitted, equidistant_points)
-# # print("Resulting points:", result_points)
-
-
-
-
-# import numpy as np
-# import matplotlib.pyplot as plt
-
-
-# # Example point and radius
-# center_point = np.array([100, 100])
-# circle_radius = 10
-
-# # Generate equidistant points on the circle
-# equidistant_points = equidistant_points_on_circle(center_point, circle_radius)
-
-# # Plotting the circle
-# circle = plt.Circle(center_point, circle_radius, color='b', fill=False, label='Circle')
-# plt.gca().add_patch(circle)
-
-# # Plotting the equidistant points
-# plt.scatter(equidistant_points[:, 0], equidistant_points[:, 1], color='red', label='Equidistant Points')
-
-# # Plotting details
-# plt.scatter(center_point[0], center_point[1], color='green', label='Center')
-# plt.xlabel('X-axis')
-# plt.ylabel('Y-axis')
-# plt.title('Circle with Equidistant Points')
-# plt.axis('equal')
-# plt.legend()
-# plt.grid()
-# plt.show()
-
-
-
-
-
-
-
-
-
-
-
-
-def plot(x, y, points_fitted, equidistant_points): # No further changes required
-    # Graph:
     plt.plot(x, y, 'ok', label='original points')
     plt.plot(points_fitted[:, 0], points_fitted[:, 1], '-r', label='fitted spline k=3, s=0.2')
     plt.scatter(equidistant_points[:, 0], equidistant_points[:, 1], color='red', label='Equidistant points')
@@ -281,4 +178,24 @@ def plot(x, y, points_fitted, equidistant_points): # No further changes required
     plt.xlabel('x')
     plt.ylabel('y')
     plt.show()
+
+
+
+
+
+
+
+
+
+
+# def plot(x, y, points_fitted, equidistant_points): # No further changes required
+#     # Graph:
+#     plt.plot(x, y, 'ok', label='original points')
+#     plt.plot(points_fitted[:, 0], points_fitted[:, 1], '-r', label='fitted spline k=3, s=0.2')
+#     plt.scatter(equidistant_points[:, 0], equidistant_points[:, 1], color='red', label='Equidistant points')
+#     plt.axis('equal')
+#     plt.legend()
+#     plt.xlabel('x')
+#     plt.ylabel('y')
+#     plt.show()
 
