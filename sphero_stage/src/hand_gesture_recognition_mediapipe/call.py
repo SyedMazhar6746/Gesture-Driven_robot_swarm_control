@@ -60,7 +60,7 @@ class run_hand_recognition():
     def receive_landmarks(self):
         while not rospy.is_shutdown():
             for landmark_list, symbol, point_history, hand_history, landmark_list_history in hand_recognizer.run_recog(self.cv_image, self.person_name): # landmark_list is a list of all landmarks in pixels
-                print('person_name', self.person_name)
+                # print('person_name', self.person_name)
                 if symbol=="Letter C" and "Left" in hand_history and "Right" in hand_history:
                     landmark_list_left, landmark_list_right = self.find_last_index_of_left_and_right(hand_history, landmark_list_history)
                     landmark_left_and_right = landmark_list_left + landmark_list_right
