@@ -21,4 +21,8 @@ Then, type the below commands on terminal
 - rosrun hri_sphero_stage control_swarm.py (Control the swarm)
 
 <!-- ![Alt text](relative%20path/Images/Big_c.png?raw=true "Title") -->
-![Getting Started](sphero_stage/Images/Big_c.png)
+<!-- ![Getting Started](sphero_stage/Images/Big_c.png) -->
+
+<div style="text-align:center">
+  <img src="sphero_stage/Images/Big_c.png" alt="Getting Started" width="700"/>
+</div>
