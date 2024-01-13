@@ -23,6 +23,22 @@ Then, type the below commands on terminal
 <!-- ![Alt text](relative%20path/Images/Big_c.png?raw=true "Title") -->
 <!-- ![Getting Started](sphero_stage/Images/Big_c.png) -->
 
+# Equidistant points
+<div style="text-align:center">
+  <img src="sphero_stage/Images/Heart_curve.png" alt="Getting Started" width="500"/>
+</div>
+
+# Flowchart: Gesture-Driven Robot Swarm Control workflow
+<div style="text-align:center">
+  <img src="sphero_stage/Images/HRI flowchart.png" alt="Getting Started" width="500"/>
+</div>
+
+# Depth-Like Perception in Two Dimensions
 <div style="text-align:center">
   <img src="sphero_stage/Images/Big_c.png" alt="Getting Started" width="500"/>
+</div>
+
+# Gesture Controlled patterns
+<div style="text-align:center">
+  <img src="sphero_stage/Images/collages_photos.jpg" alt="Getting Started" width="500"/>
 </div>
