@@ -35,7 +35,7 @@ Then, type the below commands on terminal
 
 # Depth-Like Perception in Two Dimensions
 <div style="text-align:center">
-  <img src="sphero_stage/Images/Big_c.png" alt="Getting Started" width="500"/>
+  <img src="sphero_stage/Images/Scaled.jpg" alt="Getting Started" width="500"/>
 </div>
 
 # Gesture Controlled patterns
