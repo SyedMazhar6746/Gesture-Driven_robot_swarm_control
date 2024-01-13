@@ -24,5 +24,5 @@ Then, type the below commands on terminal
 <!-- ![Getting Started](sphero_stage/Images/Big_c.png) -->
 
 <div style="text-align:center">
-  <img src="sphero_stage/Images/Big_c.png" alt="Getting Started" width="700"/>
+  <img src="sphero_stage/Images/Big_c.png" alt="Getting Started" width="500"/>
 </div>
